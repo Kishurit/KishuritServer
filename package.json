@@ -1,0 +1,39 @@
+{
+  "name": "kishurit-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "start": "node dist/index.js",
+    "build": "tsc -p .",
+    "dev": "nodemon src/index.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Roman Braverman",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/cors": "^2.8.13",
+    "@types/debug": "^4.1.7",
+    "@types/express": "^4.17.17",
+    "@types/lodash": "^4.14.198",
+    "@types/morgan": "^1.9.6",
+    "@types/node": "^20.1.0",
+    "nodemon": "^2.0.22",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.0.4"
+  },
+  "dependencies": {
+    "@types/morgan": "^1.9.4",
+    "@types/nodemailer": "^6.4.8",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "lodash": "^4.17.21",
+    "mongoose": "^6.11.2",
+    "mongoose-autopopulate": "^1.0.1",
+    "mongoose-unique-validator": "^4.0.0",
+    "morgan": "^1.10.0",
+    "nocache": "^3.0.4",
+    "nodemailer": "^6.9.1"
+  }
+}
