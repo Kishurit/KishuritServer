@@ -1,7 +1,5 @@
 import mongoose, { Connection, ConnectOptions, Mongoose } from "mongoose";
 
-const dbConnectionString = process.env.MONGO_URI;
-
 //mongoose.set("debug", true);
 mongoose.set("bufferCommands", true);
 mongoose.set("strictQuery", true);
@@ -15,16 +13,15 @@ const options = {
   useUnifiedTopology: true,
 };
 
-const connectToDatabase1 = async (): Promise<Mongoose> => {
+export const connectToDatabase = async (
+  dbConnectionString: string
+): Promise<Connection> => {
   try {
-    const connection: Mongoose = await mongoose.connect(
+    const connection: Connection = await mongoose.createConnection(
       dbConnectionString,
       options
     );
-    console.log(
-      "\ndatabase connected. Ready state:",
-      connection.connection.readyState
-    );
+    console.log("\ndatabase connected. Ready state:", connection.readyState);
     return connection;
   } catch (error) {
     console.log("CONNECTION ERROR:", error);
@@ -32,16 +29,4 @@ const connectToDatabase1 = async (): Promise<Mongoose> => {
   }
 };
 
-const db1: Connection = mongoose.connection;
-
-/*db.on("error", (error) => {
-  console.error("CONNECTION ERROR:", error);
-});
-
-db.once("open", () => {
-  console.log("\ndatabase connected. Ready state:", db.readyState);
-});*/
-
-export { connectToDatabase1, db1 as default };
-// export const collections = db.collections;
-// export const collection = db.collection;
+export const db1 = mongoose.connection;

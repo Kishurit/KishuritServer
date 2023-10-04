@@ -2,7 +2,7 @@ import { Model } from "mongoose"; // Import the appropriate type if needed
 import * as fs from "fs";
 import * as _ from "lodash";
 
-import db1 from "./db1";
+import { db1 } from "./db1";
 import {
   Categorie,
   SubCategorie,

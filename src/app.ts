@@ -2,7 +2,7 @@ import mongoose, { Connection, Mongoose } from "mongoose";
 import express, { Request, Response, NextFunction } from "express";
 import * as dotenv from "dotenv"; // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
 import { cls } from "./api";
-import { connectToDatabase } from "./db";
+import { connectToDatabase } from "./db1";
 dotenv.config();
 
 //import { app, server } from "./server";
