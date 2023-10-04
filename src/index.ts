@@ -8,12 +8,11 @@ dotenv.config();
 import { app } from "./server";
 import routes from "./routes";
 import db1, { connectToDatabase1 } from "./db1";
-import db2, { connectToDatabase2 } from "./db2";
 import { cls } from "./api";
 
 cls();
 connectToDatabase1();
-connectToDatabase2();
+//connectToDatabase2();
 
 const options: cors.CorsOptions = {
   allowedHeaders: ["Content-Type"],

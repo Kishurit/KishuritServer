@@ -21,7 +21,7 @@ import {
   writeCatToDB,
   writeSubCatToDB,
 } from "../copyToDB";
-import { cls, deleteAllCollections, getCnt, jsonDB } from "../api";
+import { cls, jsonDB } from "../api";
 // import orgsModel from "../models/orgs.model";
 // import { Collection, model, Model } from "mongoose";
 
