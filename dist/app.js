@@ -22,6 +22,15 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -30,39 +39,24 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const express_1 = __importDefault(require("express"));
 const dotenv = __importStar(require("dotenv")); // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
 const api_1 = require("./api");
+const db = __importStar(require("./db1"));
 dotenv.config();
 const app = (0, express_1.default)();
 (0, api_1.cls)();
-//mongoose.set("debug", true);
-mongoose_1.default.set("bufferCommands", true);
-mongoose_1.default.set("strictQuery", true);
-mongoose_1.default.Promise = global.Promise;
-const options = {
-    useNewUrlParser: true,
-    autoIndex: true,
-    //promiseLibrary: global.Promise,
-    useUnifiedTopology: true,
-};
-function db(dbConnectionString) {
-    try {
-        const connection = mongoose_1.default.createConnection(dbConnectionString, options);
-        connection.on("connected", () => {
-            console.log(`\ndatabase connected. Ready state: ${connection.readyState}`);
-        });
-        connection.on("error", (error) => {
-            console.error("Connection error:", error);
-        });
-    }
-    catch (error) {
-        console.error("CONNECTION ERROR:", error);
-        throw error;
-    }
-}
-db(process.env.MONGO_URI);
+//db.dbConnect(process.env.MONGO_URI);
+db.connectToDatabase(process.env.MONGU_URI);
 //db1.dbConnect(process.env.MONGO_URI);
 //db1.connectToDatabase;
-app.get("/", async function (req, res, next) {
-    (0, api_1.getCnt)().then((data) => res.json(data));
+app.get("/", function (req, res, next) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const db1 = mongoose_1.default.connections;
+        const collectionNames = db1.forEach;
+        if (collectionNames) {
+            res.json(collectionNames);
+        }
+        else
+            res.json(true);
+    });
 });
 app.listen(8080);
 //# sourceMappingURL=app.js.map

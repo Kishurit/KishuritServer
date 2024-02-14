@@ -1,4 +1,13 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -7,8 +16,6 @@ const nodemailer_1 = __importDefault(require("nodemailer"));
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 class MailService {
-    static instance;
-    transporter;
     constructor() {
         this.createConnection();
     }
@@ -31,33 +38,37 @@ class MailService {
         });
     }
     // SEND MAIL
-    async sendMail(options, req, res) {
-        try {
-            if (!this.transporter) {
-                await this.createConnection();
+    sendMail(options, req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                if (!this.transporter) {
+                    yield this.createConnection();
+                }
+                options.to = 'drushimgalil@gmail.com';
+                console.log(options);
+                const info = yield this.getTransporter().sendMail(options);
+                yield this.verifyConnection(info);
+                res.send(options);
             }
-            options.to = 'drushimgalil@gmail.com';
-            console.log(options);
-            const info = await this.getTransporter().sendMail(options);
-            await this.verifyConnection(info);
-            res.send(options);
-        }
-        catch (err) {
-            console.error(err);
-            res.status(404).json({ status: 404, message: err });
-        }
+            catch (err) {
+                console.error(err);
+                res.status(404).json({ status: 404, message: err });
+            }
+        });
     }
     // VERIFY CONNECTION
-    async verifyConnection(info) {
-        try {
-            await this.transporter.verify();
-            console.log('Email sent: ' + info.response);
-            console.log('Message sent: %s', info.messageId);
-            console.log('Preview URL: %s', nodemailer_1.default.getTestMessageUrl(info));
-        }
-        catch (err) {
-            console.error(err);
-        }
+    verifyConnection(info) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                yield this.transporter.verify();
+                console.log('Email sent: ' + info.response);
+                console.log('Message sent: %s', info.messageId);
+                console.log('Preview URL: %s', nodemailer_1.default.getTestMessageUrl(info));
+            }
+            catch (err) {
+                console.error(err);
+            }
+        });
     }
     // CREATE TRANSPORTER
     getTransporter() {

@@ -22,32 +22,39 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.jsonDB = exports.getCnt = exports.deleteAllCollections = exports.cls = void 0;
+exports.generateRandomText = exports.jsonDB = exports.getCnt = exports.cls = void 0;
 const fs = __importStar(require("fs"));
-const db_1 = __importDefault(require("./db"));
+const db1_1 = __importDefault(require("./db1"));
 function cls() {
     console.log(`\x1Bc`);
 }
 exports.cls = cls;
-const deleteAllCollections = async () => {
-    const models = Object.values(db_1.default.models);
-    try {
-        //await db.dropDatabase();
-        for (const model of models) {
-            await model.deleteMany({});
-            await model.remove();
-            console.log(`Deleted collection: ${model.baseModelName}`);
-        }
-    }
-    catch (error) {
-        console.error(`Error deleting collections: ${error}`);
-    }
-};
-exports.deleteAllCollections = deleteAllCollections;
+// export const deleteAllCollections = async (): Promise<void> => {
+//   const models: Model<any>[] = Object.values(db.models);
+//   try {
+//     //await db.dropDatabase();
+//     for (const model of models) {
+//       await model.deleteMany({});
+//       await model.remove();
+//       console.log(`Deleted collection: ${model.baseModelName}`);
+//     }
+//   } catch (error) {
+//     console.error(`Error deleting collections: ${error}`);
+//   }
+// };
 // export const deleteAllCollections = async (): Promise<void> => {
 //   try {
 //     await db.dropDatabase();
@@ -56,17 +63,16 @@ exports.deleteAllCollections = deleteAllCollections;
 //     console.error(`Error deleting database: ${error}`);
 //   }
 // };
-const getCnt = async () => {
-    const models = Object.values(db_1.default.models);
-    const counts = await Promise.all(models.map(async (model) => {
+const getCnt = (dbName) => __awaiter(void 0, void 0, void 0, function* () {
+    const models = Object.values((0, db1_1.default)(dbName).models);
+    const counts = yield Promise.all(models.map((model) => __awaiter(void 0, void 0, void 0, function* () {
         const modelName = model.collection.collectionName;
-        const cnt = await model.collection.countDocuments();
-        const obj = { [modelName]: cnt };
-        return obj;
-    }));
+        const cnt = yield model.collection.countDocuments();
+        return { [modelName]: cnt };
+    })));
     const countsMerged = Object.assign({}, ...counts);
     return countsMerged;
-};
+});
 exports.getCnt = getCnt;
 const myJsonData = () => {
     try {
@@ -82,4 +88,11 @@ const myJsonData = () => {
     }
 };
 exports.jsonDB = myJsonData();
+function generateRandomText(minLength, maxLength) {
+    const alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789,./<>?;':[]\{}|`~!@#$%^&*()-_=+" + '"';
+    const length = Math.floor(Math.random() * (maxLength - minLength + 1)) + minLength;
+    const text = Array.from({ length }, () => alphabet[Math.floor(Math.random() * alphabet.length)]).join("");
+    return text;
+}
+exports.generateRandomText = generateRandomText;
 //# sourceMappingURL=api.js.map

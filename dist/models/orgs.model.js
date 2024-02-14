@@ -29,8 +29,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
 const mongoose_unique_validator_1 = __importDefault(require("mongoose-unique-validator"));
 const orgSchema = new mongoose_1.Schema({
-    catRefId: { type: mongoose_1.Schema.Types.ObjectId, required: true, ref: "Categry" },
-    subCatRefId: { type: mongoose_1.Schema.Types.ObjectId, required: true, ref: "SubCategory" },
+    catRefId: { type: mongoose_1.Schema.Types.ObjectId, required: true, ref: "Categry", refPath: "KishuritForAll" },
+    subCatRefId: { type: mongoose_1.Schema.Types.ObjectId, required: true, ref: "SubCategory", refPath: "KishuritForAll" },
     org_name: { type: String, required: true },
     desc: { type: String, required: false },
     web_link: { type: [String], default: [] },
@@ -54,7 +54,7 @@ const orgSchema = new mongoose_1.Schema({
             type: [
                 {
                     tel: { type: String, required: true },
-                    owner: { type: String }, // optional owner field
+                    owner: { type: String, required: false }, // optional owner field
                 },
             ],
             required: false,

@@ -1,4 +1,13 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -16,9 +25,9 @@ const options = {
     //promiseLibrary: global.Promise,
     useUnifiedTopology: true,
 };
-const connectToDatabase = async () => {
+const connectToDatabase = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const connection = await mongoose_1.default.connect(dbConnectionString, options);
+        const connection = yield mongoose_1.default.connect(dbConnectionString, options);
         console.log("\ndatabase connected. Ready state:", connection.connection.readyState);
         return connection;
     }
@@ -26,9 +35,9 @@ const connectToDatabase = async () => {
         console.log("CONNECTION ERROR:", error);
         throw error;
     }
-};
+});
 exports.connectToDatabase = connectToDatabase;
-const connectToDatabase1 = async () => {
+const connectToDatabase1 = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const connection = mongoose_1.default.createConnection(dbConnectionString, options);
         connection.on('connected', () => {
@@ -43,7 +52,7 @@ const connectToDatabase1 = async () => {
         console.error('CONNECTION ERROR:', error);
         throw error;
     }
-};
+});
 const db = mongoose_1.default.connection;
 exports.default = db;
 exports.collections = db.collections;
