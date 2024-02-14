@@ -34,8 +34,8 @@ export interface Orgs extends Document {
 }
 
 const orgSchema = new Schema<Orgs>({
-  catRefId: { type: Schema.Types.ObjectId, required: true, ref: "Categry" },
-  subCatRefId: { type: Schema.Types.ObjectId, required: true, ref: "SubCategory" },
+  catRefId: { type: Schema.Types.ObjectId, required: true, ref: "Categry", refPath: "KishuritForAll" },
+  subCatRefId: { type: Schema.Types.ObjectId, required: true, ref: "SubCategory", refPath: "KishuritForAll" },
   org_name: { type: String, required: true },
   desc: { type: String, required: false },
   web_link: { type: [String], default: [] },
@@ -59,7 +59,7 @@ const orgSchema = new Schema<Orgs>({
       type: [
         {
           tel: { type: String, required: true },
-          owner: { type: String }, // optional owner field
+          owner: { type: String, required: false }, // optional owner field
         },
       ],
       required: false,

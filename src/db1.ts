@@ -1,6 +1,6 @@
 import mongoose, { Connection, ConnectOptions, Mongoose } from "mongoose";
 
-const dbConnectionString: string = process.env.MONGO_URI;
+//const dbConnectionString: string = process.env.MONGO_URI;
 
 //mongoose.set("debug", true);
 mongoose.set("bufferCommands", true);
@@ -9,17 +9,25 @@ mongoose.set("strictQuery", true);
 mongoose.Promise = global.Promise;
 
 const options = {
-  useNewUrlParser: true,
+  //useNewUrlParser: true,
   autoIndex: true,
   //promiseLibrary: global.Promise,
-  useUnifiedTopology: true,
+  //useUnifiedTopology: true,
 };
 
-export const connectToDatabase = async (): Promise<Mongoose> => {
+export const connectToDatabase = async (
+  dbConnectionString: string,
+  dbName?: string
+): Promise<Mongoose> => {
+  const newOptions = {
+    ...options,
+    ...(dbName !== undefined && { dbName: dbName }),
+  };
+
   try {
     const connection: Mongoose = await mongoose.connect(
       dbConnectionString,
-      options
+      newOptions
     );
     console.log(
       "\ndatabase connected. Ready state:",
@@ -32,11 +40,13 @@ export const connectToDatabase = async (): Promise<Mongoose> => {
   }
 };
 
-export const dbConnect = async (connectionString: string): Promise<Connection> => {
-
+export const dbConnect = async (
+  dbConnectionString: string,
+  dbName?: string
+): Promise<Connection> => {
   try {
-    const connection: Connection = mongoose.createConnection(
-      connectionString,
+    const connection: Connection = await mongoose.createConnection(
+      dbConnectionString,
       options
     );
 
@@ -55,8 +65,8 @@ export const dbConnect = async (connectionString: string): Promise<Connection> =
   }
 };
 
-const db: Connection = mongoose.connection;
-
+const db = (dbName: string): Connection =>
+  mongoose.connections.find((connection) => connection.name === dbName);
 /*db.on("error", (error) => {
   console.error("CONNECTION ERROR:", error);
 });

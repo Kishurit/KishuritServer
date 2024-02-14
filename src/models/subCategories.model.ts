@@ -1,13 +1,14 @@
-import mongoose, { Schema, Document, Model, Types } from "mongoose";
+import mongoose, { Schema, Document, Model, Collection, Connection, Types } from "mongoose";
 import uniqueValidator from "mongoose-unique-validator";
 import mongooseAutoPopulate from "mongoose-autopopulate";
 import { Category, categoriesSchema } from "./categories.model";
+import * as db from "../db1";
 
 export interface SubCategory extends Category {
   catRefId: Types.ObjectId;
 }
 
-const subCategoriesSchema: Schema<SubCategory> = new Schema<SubCategory>({
+export const subCategoriesSchema: Schema<SubCategory> = new Schema<SubCategory>({
   catRefId: {
     type: Schema.Types.ObjectId,
     unique: false,
@@ -24,9 +25,15 @@ subCategoriesSchema.plugin(uniqueValidator, {
 });
 
 subCategoriesSchema.plugin(mongooseAutoPopulate);
-const SubCategoryModel: Model<SubCategory> = mongoose.model<SubCategory>(
-  "SubCategories",
-  subCategoriesSchema
-);
+
+export const SubCatModel = mongoose.model<SubCategory>("subcategories", subCategoriesSchema);
+
+const SubCatModelWithConn = (connection: Connection): Model<SubCategory> => { 
+  return connection.model<SubCategory>("subcategories", subCategoriesSchema);
+};
+
+export const SubCategoryModel = (): Model<SubCategory> => {
+  return db.default(process.env.DB_NAME).model<SubCategory>("subcategories", subCategoriesSchema);
+};
 
 export default SubCategoryModel;

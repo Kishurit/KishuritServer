@@ -1,7 +1,7 @@
-import CategoriesModel, { Category } from "../models/categories.model";
+import CategoryModel, { Category } from "../models/categories.model";
 
 export const categoriesData = () => {
-  CategoriesModel
+  CategoryModel
     .find()
     .then((data: Category[]) => {
       const categoryNames = data.map((info: Category) => info.name);

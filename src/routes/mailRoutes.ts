@@ -20,10 +20,10 @@ mailRouter.post(
     const { data } = req.body as { data: Mail }; // Cast req.body to the expected type
     var { email, subject, name, tel, message } = data;
 
-    if (name.trim() === "") name = undefined;
-    if (tel.trim() === "") tel = undefined;
-    if (email.trim() === "") email = "romanbr@walla.com";
-    const mail = `Message from ${name} tel: ${tel}\n ${message.trim()}`;
+    if (name.trim() === "") name = "---";
+    if (tel.trim() === "") tel = "---";
+    if (email.trim() === "") email = "---";
+    const mail = `Message from ${email} name: ${name}  tel: ${tel}\n ${message.trim()}`;
 
     console.log(mail);
     MailService.sendMail(

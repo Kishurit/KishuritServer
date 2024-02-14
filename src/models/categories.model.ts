@@ -1,5 +1,7 @@
-import mongoose, { Schema, Document, Model } from "mongoose";
+import mongoose, { Schema, Document, Model, Collection, Connection } from "mongoose";
 import uniqueValidator from "mongoose-unique-validator";
+import * as db from "../db1";
+import mongooseAutoPopulate from "mongoose-autopopulate";
 export interface Category extends Document {
   name: string;
   desc: string;
@@ -22,9 +24,17 @@ categoriesSchema.plugin(uniqueValidator, {
   message: "Error, expected {PATH} to be unique.",
 });
 
-const CategoriesModel: Model<Category> = mongoose.model <Category>(
-  "Category",
-  categoriesSchema
-);
+categoriesSchema.plugin(mongooseAutoPopulate);
 
-export default CategoriesModel;
+export const CategoryModel: Model<Category> = mongoose.model<Category>("categories", categoriesSchema);
+
+// const CatModelWithConn = (connection: Connection): Model<Category> => {
+//   return connection.model<Category>("categories", categoriesSchema);
+// };
+
+// export const CategoryModel = (): Model<Category> => {
+//   return db.default(process.env.DB_NAME).model<Category>("categories", categoriesSchema);
+// };
+
+
+export default CategoryModel;

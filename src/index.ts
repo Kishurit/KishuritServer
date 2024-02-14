@@ -1,19 +1,20 @@
 import cors from "cors";
-import * as dotenv from "dotenv"; // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
+import * as dotenv from "dotenv";
 import morgan from "morgan";
 import express, { NextFunction, Request, Response } from "express";
 import nocache from "nocache";
+import mongoose, { Connection, Document, Model, Schema } from "mongoose";
 dotenv.config();
 
 import { app } from "./server";
 import routes from "./routes";
-import { cls, getCnt } from "./api";
-import { connectToDatabase } from "./db";
+import * as db from "./db1";
+import { cls, generateRandomText } from "./api";
+import CategoryModel, { categoriesSchema, Category } from "./models/categories.model";
 
 cls();
-//connectToDatabase();
-//connectToDatabase2();
-//getCnt().then (data => console.log (data));
+
+const db1 = db.dbConnect(process.env.MONGO_URI, process.env.DB_NAME);
 
 const options: cors.CorsOptions = {
   allowedHeaders: ["Content-Type"],
@@ -30,9 +31,45 @@ app.use(nocache());
 app.use(morgan("dev"));
 
 app.use(function (req: Request, res: Response, next: NextFunction) {
-    console.log ((new Date()).toLocaleTimeString());
-    next();
-})
+  console.log(new Date().toLocaleTimeString());
+  next();
+});
+
+// app.get("/", async function (req: Request, res: Response, next: NextFunction) {
+//   const db0 = db.default("Kishurit");
+  
+//   try {
+//     const CategoriesModel: Model<Category> = db0.model<Category>(
+//       "Category",
+//       categoriesSchema
+//     );
+
+//     const newCategory = new CategoriesModel({
+//       name: generateRandomText(3, 9),
+//       desc: generateRandomText(3, 9),
+//     });
+
+//     await newCategory.save();
+//     console.log(newCategory);
+
+//     res.json(newCategory);
+//   } catch (error) {
+//     console.error(error);
+//     res
+//       .status(500)
+//       .json({ error: "An error occurred while saving the category." });
+//   }
+// });
+
+app.get('/wc2', async (req: Request, res: Response) => {
+  try {
+    const categories: Category[] = await CategoryModel.find(); // Find all categories
+    res.json(categories); // Send the categories as a JSON response
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Server Error'); // Send a 500 error response if there's an error
+  }
+});
 
 routes.forEach((route) => {
   app.use("/", route);

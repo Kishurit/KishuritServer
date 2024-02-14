@@ -8,7 +8,7 @@ const app = express();
 /**
  * Get port from environment and store in Express.
  */
-const port: string | number | false = normalizePort(process.env.PORT || '8080');
+const port: string | number | false = normalizePort(process.env.PORT || '8081');
 app.set('port', port);
 
 /**

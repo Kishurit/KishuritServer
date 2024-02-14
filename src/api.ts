@@ -1,8 +1,7 @@
-import { Model } from "mongoose"; // Import the appropriate type if needed
+import mongoose, { Model, Connection } from "mongoose"; // Import the appropriate type if needed
 import * as fs from "fs";
 import * as _ from "lodash";
 
-import db from "./db";
 import {
   Categorie,
   SubCategorie,
@@ -11,6 +10,7 @@ import {
   Mail,
   Kishurit,
 } from "./types";
+import db from "./db1";
 
 interface CountObject {
   [modelName: string]: number;
@@ -20,19 +20,19 @@ export function cls() {
   console.log(`\x1Bc`);
 }
 
-export const deleteAllCollections = async (): Promise<void> => {
-  const models: Model<any>[] = Object.values(db.models);
-  try {
-    //await db.dropDatabase();
-    for (const model of models) {
-      await model.deleteMany({});
-      await model.remove();
-      console.log(`Deleted collection: ${model.baseModelName}`);
-    }
-  } catch (error) {
-    console.error(`Error deleting collections: ${error}`);
-  }
-};
+// export const deleteAllCollections = async (): Promise<void> => {
+//   const models: Model<any>[] = Object.values(db.models);
+//   try {
+//     //await db.dropDatabase();
+//     for (const model of models) {
+//       await model.deleteMany({});
+//       await model.remove();
+//       console.log(`Deleted collection: ${model.baseModelName}`);
+//     }
+//   } catch (error) {
+//     console.error(`Error deleting collections: ${error}`);
+//   }
+// };
 
 // export const deleteAllCollections = async (): Promise<void> => {
 //   try {
@@ -43,15 +43,17 @@ export const deleteAllCollections = async (): Promise<void> => {
 //   }
 // };
 
-export const getCnt: () => Promise<CountObject> = async () => {
-  const models: Model<any>[] = Object.values(db.models);
+export const getCnt: (dbName: string) => Promise<CountObject> = async (
+  dbName: string
+): Promise<CountObject> => {
+
+  const models: Model<any>[] = Object.values(db(dbName).models);
 
   const counts = await Promise.all(
-    models.map(async (model) => {
+    models.map(async (model: Model<any>): Promise<CountObject> => {
       const modelName = model.collection.collectionName;
       const cnt = await model.collection.countDocuments();
-      const obj: CountObject = { [modelName]: cnt };
-      return obj;
+      return { [modelName]: cnt };
     })
   );
 
@@ -76,3 +78,10 @@ const myJsonData = (): Kishurit => {
 };
 
 export const jsonDB: Kishurit = myJsonData();
+
+export function generateRandomText(minLength: number, maxLength: number): string {
+  const alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789,./<>?;':[]\{}|`~!@#$%^&*()-_=+" + '"';
+  const length = Math.floor(Math.random() * (maxLength - minLength + 1)) + minLength;
+  const text = Array.from({ length }, () => alphabet[Math.floor(Math.random() * alphabet.length)]).join("");
+  return text;
+}
