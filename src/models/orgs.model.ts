@@ -1,14 +1,20 @@
 import mongoose, { Document, Model, Schema, Types } from "mongoose";
 import uniqueValidator from "mongoose-unique-validator";
-import * as autopopulate from "mongoose-autopopulate";
+import mongooseAutoPopulate from "mongoose-autopopulate";
+import { Category } from "./categories.model";
+import { SubCategory } from "./subCategories.model";
 
-type tel = { tel: string; owner?: string };
+interface Tel {
+  tel: string;
+  owner?: string;
+}
+
 type Location = "" | "north" | "south" | "center" | "yosh" | "website";
 
-export type Snif = {
+interface Snif {
   name?: String;
-  tel: tel[];
-  whatsapp?: tel[];
+  tel: Tel[];
+  whatsapp?: Tel[];
   email?: string[];
   location: Location;
   city: string;
@@ -16,8 +22,8 @@ export type Snif = {
 };
 
 export interface Orgs extends Document {
-  catRefId: Types.ObjectId;
-  subCatRefId: Types.ObjectId;
+  catRefId: Category & Types.ObjectId;
+  subCatRefId: SubCategory & Types.ObjectId;
   org_name: string;
   desc?: string;
   web_link: string[];
@@ -25,88 +31,60 @@ export interface Orgs extends Document {
   linkedIn_link?: string[];
   instagram_link?: string[];
   email: string[];
-  tel?: tel[];
-  whatsapp?: tel[];
+  tel: Tel[];
+  whatsapp?: Tel[];
   location: Location;
   address?: String;
   snifim?: Snif[];
   active: Boolean;
 }
 
+const telSchema = new mongoose.Schema<Tel>({
+  tel: { type: String, required: true },
+  owner: { type: String, required: false }
+}, { _id: false });
+
+const whatsappSchema = new mongoose.Schema<Tel>({
+  tel: { type: String, required: false },
+  owner: { type: String, required: false }
+}, { _id: false });
+
+const snifSchema = new Schema<Snif>({
+  name: { type: String },
+  tel: { type: [telSchema], required: true },
+  whatsapp: [whatsappSchema],
+  email: [String],
+  location: { type: String, enum: ["", "north", "south", "center", "yosh", "website"], default: "" },
+  city: { type: String, required: true },
+  address: { type: String, required: true }
+}, { _id: false });
+
 const orgSchema = new Schema<Orgs>({
-  catRefId: { type: Schema.Types.ObjectId, required: true, ref: "Categry", refPath: "KishuritForAll" },
-  subCatRefId: { type: Schema.Types.ObjectId, required: true, ref: "SubCategory", refPath: "KishuritForAll" },
+  catRefId: { type: Schema.Types.ObjectId, required: true, ref: "categories" },
+  subCatRefId: { type: Schema.Types.ObjectId, required: true, ref: "subcategories" },
   org_name: { type: String, required: true },
-  desc: { type: String, required: false },
+  desc: { type: String },
   web_link: { type: [String], default: [] },
   facebook_link: { type: [String], default: [] },
   linkedIn_link: { type: [String], default: [] },
   instagram_link: { type: [String], default: [] },
-  email: { type: [String], required: false },
-  tel: [
-    {
-      type: [
-        {
-          tel: { type: String, required: true },
-          owner: { type: String, required: false }, // optional owner field
-        },
-      ],
-      required: false,
-    },
-  ],
-  whatsapp: [
-    {
-      type: [
-        {
-          tel: { type: String, required: true },
-          owner: { type: String, required: false }, // optional owner field
-        },
-      ],
-      required: false,
-    },
-  ],
-  location: {
-    type: String,
-    enum: ["", "north", "south", "center", "yosh", "website"],
-    required: true,
-  },
+  email: { type: [String] },
+  tel: { type: [telSchema], required: true },
+  whatsapp: [whatsappSchema],
+  location: { type: String, enum: ["", "north", "south", "center", "yosh", "website"], default: "" },
   address: { type: String },
   snifim: [
     {
-      type: [
-        {
-          name: { type: String },
-          tel: [
-            {
-              tel: { type: String, required: true },
-              owner: { type: String }, // optional owner field
-            },
-          ],
-          whatsapp: [
-            {
-              tel: { type: String, required: true },
-              owner: { type: String }, // optional owner field
-            },
-          ],
-          email: { type: [String] },
-          location: {
-            type: String,
-            enum: ["north", "south", "center", "yosh", "website"],
-            required: true,
-          },
-          city: { type: String, required: true },
-          address: { type: String, required: true },
-        },
-      ],
+      type: [snifSchema],
       required: false,
     },
   ],
-  active: { type: Boolean, required: true, default: false },
+  active: { type: Boolean, default: false },
 });
 
 orgSchema.plugin(uniqueValidator, "Error, expected {PATH} to be unique.");
-//orgSchema.plugin(autopopulate);
+orgSchema.plugin(mongooseAutoPopulate);
 
-const orgsModel: Model<Orgs> = mongoose.model<Orgs>("orgs", orgSchema);
+const OrgsModel: Model<Orgs> = mongoose.model<Orgs>("orgs", orgSchema);
 
-export default orgsModel;
+export default OrgsModel;

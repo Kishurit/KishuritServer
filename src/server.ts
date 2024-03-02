@@ -28,6 +28,16 @@ server.listen(port, () =>
 server.on('error', onError);
 server.on('listening', onListening);
 
+process.on('SIGINT', (num) => {
+  console.log('Received SIGINT signal. Closing server...');
+  
+  // Close the server
+  server.close(() => {
+    console.log('Server closed.');
+    process.exit(0);
+  });
+});
+
 /**
  * Normalize a port into a number, string, or false.
  */

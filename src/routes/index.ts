@@ -7,7 +7,7 @@ import mailRouter from "./mailRoutes";
 import { cls, generateRandomText, jsonDB } from "../api";
 import * as db from "../db1";
 import { categoriesSchema, Category } from "../models/categories.model";
-import { writeCatToDB } from "../copyToDB";
+//import { writeCatToDB } from "../copyToDB";
 
 const globalRouter: express.Router = express.Router();
 

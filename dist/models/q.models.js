@@ -22,15 +22,6 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.runExample = exports.OrderModel = exports.CustomerModel = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
@@ -69,51 +60,45 @@ const CompanyModel = mongoose_1.default.model("Company", CompanySchema);
 const FreelancerModel = mongoose_1.default.model("Freelancer", FreelancerSchema);
 exports.OrderModel = mongoose_1.default.model("Order", OrderSchema);
 // Функция, которая создает новый заказ
-function createOrder(customerType, customerId, amount) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const newOrder = new exports.OrderModel({
-            customerType,
-            customer: customerId,
-            amount,
-        });
-        yield newOrder.save();
-        return newOrder;
+async function createOrder(customerType, customerId, amount) {
+    const newOrder = new exports.OrderModel({
+        customerType,
+        customer: customerId,
+        amount,
     });
+    await newOrder.save();
+    return newOrder;
 }
-function createCustomer(customerType, customerId) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const newCustomer = new exports.CustomerModel({
-            customerType,
-            customer: customerId,
-        });
-        yield newCustomer.save();
-        return newCustomer;
+async function createCustomer(customerType, customerId) {
+    const newCustomer = new exports.CustomerModel({
+        customerType,
+        customer: customerId,
     });
+    await newCustomer.save();
+    return newCustomer;
 }
 // Этот раздел подключится к базе данных и создаст примеры.
-function runExample() {
-    return __awaiter(this, void 0, void 0, function* () {
-        // Создание клиентов
-        const johnDoe = yield PrivateIndividualModel.create({
-            name: "John Doe",
-            email: "john.doe@example.com",
-        });
-        const acmeCorp = yield CompanyModel.create({
-            companyName: "Acme Corp",
-            contactEmail: "info@acme.com",
-        });
-        const janeFreelancer = yield FreelancerModel.create({
-            freelancerName: "Jane",
-            services: ["design", "development"],
-        });
-        const cust1 = yield createCustomer("PrivateIndividual", johnDoe._id);
-        const cust2 = yield createCustomer("Company", acmeCorp._id);
-        const cust3 = yield createCustomer("Freelancer", janeFreelancer._id);
-        // Создание заказов
-        const order1 = yield createOrder("PrivateIndividual", cust1.customer, 100);
-        const order2 = yield createOrder("Company", cust2.customer, 200);
-        const order3 = yield createOrder("Freelancer", cust3.customer, 300);
+async function runExample() {
+    // Создание клиентов
+    const johnDoe = await PrivateIndividualModel.create({
+        name: "John Doe",
+        email: "john.doe@example.com",
     });
+    const acmeCorp = await CompanyModel.create({
+        companyName: "Acme Corp",
+        contactEmail: "info@acme.com",
+    });
+    const janeFreelancer = await FreelancerModel.create({
+        freelancerName: "Jane",
+        services: ["design", "development"],
+    });
+    const cust1 = await createCustomer("PrivateIndividual", johnDoe._id);
+    const cust2 = await createCustomer("Company", acmeCorp._id);
+    const cust3 = await createCustomer("Freelancer", janeFreelancer._id);
+    // Создание заказов
+    const order1 = await createOrder("PrivateIndividual", cust1.customer, 100);
+    const order2 = await createOrder("Company", cust2.customer, 200);
+    const order3 = await createOrder("Freelancer", cust3.customer, 300);
 }
 exports.runExample = runExample;
 //# sourceMappingURL=q.models.js.map

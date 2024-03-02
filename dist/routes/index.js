@@ -7,6 +7,7 @@ const express_1 = __importDefault(require("express"));
 const routes_1 = __importDefault(require("./routes"));
 const dbRoutes_1 = __importDefault(require("./dbRoutes"));
 const mailRoutes_1 = __importDefault(require("./mailRoutes"));
+//import { writeCatToDB } from "../copyToDB";
 const globalRouter = express_1.default.Router();
 globalRouter.use(function (req, res, next) {
     if (

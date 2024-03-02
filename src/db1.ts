@@ -9,10 +9,9 @@ mongoose.set("strictQuery", true);
 mongoose.Promise = global.Promise;
 
 const options = {
-  //useNewUrlParser: true,
   autoIndex: true,
-  //promiseLibrary: global.Promise,
-  //useUnifiedTopology: true,
+  useUnifiedTopology: true,
+  useNewUrlParser: true,
 };
 
 export const connectToDatabase = async (
@@ -33,6 +32,7 @@ export const connectToDatabase = async (
       "\ndatabase connected. Ready state:",
       connection.connection.readyState
     );
+    
     return connection;
   } catch (error) {
     console.log("CONNECTION ERROR:", error);
@@ -44,10 +44,15 @@ export const dbConnect = async (
   dbConnectionString: string,
   dbName?: string
 ): Promise<Connection> => {
+  const newOptions = {
+    ...options,
+    ...(dbName !== undefined && { dbName: dbName }),
+  };
+
   try {
-    const connection: Connection = await mongoose.createConnection(
+    const connection: Connection = mongoose.createConnection(
       dbConnectionString,
-      options
+      newOptions,
     );
 
     connection.on("connected", () => {
@@ -57,6 +62,10 @@ export const dbConnect = async (
     connection.on("error", (error) => {
       console.error("Connection error:", error);
     });
+
+    if (dbName) {
+      connection.useDb(dbName);
+    }
 
     return connection;
   } catch (error) {

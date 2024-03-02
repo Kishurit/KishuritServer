@@ -28,78 +28,49 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
 const mongoose_unique_validator_1 = __importDefault(require("mongoose-unique-validator"));
+const mongoose_autopopulate_1 = __importDefault(require("mongoose-autopopulate"));
+;
+const telSchema = new mongoose_1.default.Schema({
+    tel: { type: String, required: true },
+    owner: { type: String, required: false }
+}, { _id: false });
+const whatsappSchema = new mongoose_1.default.Schema({
+    tel: { type: String, required: false },
+    owner: { type: String, required: false }
+}, { _id: false });
+const snifSchema = new mongoose_1.Schema({
+    name: { type: String },
+    tel: { type: [telSchema], required: true },
+    whatsapp: [whatsappSchema],
+    email: [String],
+    location: { type: String, enum: ["", "north", "south", "center", "yosh", "website"], default: "" },
+    city: { type: String, required: true },
+    address: { type: String, required: true }
+}, { _id: false });
 const orgSchema = new mongoose_1.Schema({
-    catRefId: { type: mongoose_1.Schema.Types.ObjectId, required: true, ref: "Categry", refPath: "KishuritForAll" },
-    subCatRefId: { type: mongoose_1.Schema.Types.ObjectId, required: true, ref: "SubCategory", refPath: "KishuritForAll" },
+    catRefId: { type: mongoose_1.Schema.Types.ObjectId, required: true, ref: "categories" },
+    subCatRefId: { type: mongoose_1.Schema.Types.ObjectId, required: true, ref: "subcategories" },
     org_name: { type: String, required: true },
-    desc: { type: String, required: false },
+    desc: { type: String },
     web_link: { type: [String], default: [] },
     facebook_link: { type: [String], default: [] },
     linkedIn_link: { type: [String], default: [] },
     instagram_link: { type: [String], default: [] },
-    email: { type: [String], required: false },
-    tel: [
-        {
-            type: [
-                {
-                    tel: { type: String, required: true },
-                    owner: { type: String, required: false }, // optional owner field
-                },
-            ],
-            required: false,
-        },
-    ],
-    whatsapp: [
-        {
-            type: [
-                {
-                    tel: { type: String, required: true },
-                    owner: { type: String, required: false }, // optional owner field
-                },
-            ],
-            required: false,
-        },
-    ],
-    location: {
-        type: String,
-        enum: ["", "north", "south", "center", "yosh", "website"],
-        required: true,
-    },
+    email: { type: [String] },
+    tel: { type: [telSchema], required: true },
+    whatsapp: [whatsappSchema],
+    location: { type: String, enum: ["", "north", "south", "center", "yosh", "website"], default: "" },
     address: { type: String },
     snifim: [
         {
-            type: [
-                {
-                    name: { type: String },
-                    tel: [
-                        {
-                            tel: { type: String, required: true },
-                            owner: { type: String }, // optional owner field
-                        },
-                    ],
-                    whatsapp: [
-                        {
-                            tel: { type: String, required: true },
-                            owner: { type: String }, // optional owner field
-                        },
-                    ],
-                    email: { type: [String] },
-                    location: {
-                        type: String,
-                        enum: ["north", "south", "center", "yosh", "website"],
-                        required: true,
-                    },
-                    city: { type: String, required: true },
-                    address: { type: String, required: true },
-                },
-            ],
+            type: [snifSchema],
             required: false,
         },
     ],
-    active: { type: Boolean, required: true, default: false },
+    active: { type: Boolean, default: false },
 });
 orgSchema.plugin(mongoose_unique_validator_1.default, "Error, expected {PATH} to be unique.");
-//orgSchema.plugin(autopopulate);
-const orgsModel = mongoose_1.default.model("orgs", orgSchema);
-exports.default = orgsModel;
+orgSchema.plugin(mongoose_autopopulate_1.default);
+const OrgsModel = mongoose_1.default.model("orgs", orgSchema);
+exports.default = OrgsModel;
 //# sourceMappingURL=orgs.model.js.map

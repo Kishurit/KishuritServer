@@ -30,18 +30,13 @@ const dotenv = __importStar(require("dotenv")); // see https://github.com/motdot
 dotenv.config();
 const express_1 = __importDefault(require("express"));
 const api_1 = require("../api");
+const routesController_1 = require("../controller/routesController");
 const router = express_1.default.Router();
 const verifyData = (data, res, next) => {
     !data ? next() : res.json(data);
 };
-router.get("/", function (req, res, next) {
-    const data = api_1.jsonDB.job.reduce((acc, element) => {
-        const totalCatNum = element.links.reduce((acc1, element1) => acc1 + element1.links.length, 0);
-        acc.total += totalCatNum;
-        acc.cat.push({ name: element.name, totNum: totalCatNum });
-        return acc;
-    }, { total: 0, cat: [] });
-    verifyData(data, res, next);
+router.get("/", async function (req, res, next) {
+    await (0, routesController_1.findCollection)(req, res, next);
 });
 router.post("/search", (req, res) => {
     const { location, searchText } = req.body;

@@ -22,30 +22,24 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const mongoose_1 = __importDefault(require("mongoose"));
-const express_1 = __importDefault(require("express"));
-const dotenv = __importStar(require("dotenv")); // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
-const api_1 = require("./api");
-const db = __importStar(require("./db1"));
-dotenv.config();
-const app = (0, express_1.default)();
-(0, api_1.cls)();
-//db.dbConnect(process.env.MONGO_URI);
-db.connectToDatabase(process.env.MONGU_URI);
-//db1.dbConnect(process.env.MONGO_URI);
-//db1.connectToDatabase;
-app.get("/", async function (req, res, next) {
-    const db1 = mongoose_1.default.connections;
-    const collectionNames = db1.forEach;
-    if (collectionNames) {
-        res.json(collectionNames);
-    }
-    else
-        res.json(true);
+exports.CombinedModel = void 0;
+const mongoose_1 = __importStar(require("mongoose"));
+const combinedSchema = new mongoose_1.Schema({
+    category: {
+        type: mongoose_1.Types.ObjectId,
+        required: true,
+        ref: 'categories',
+        autopopulate: true,
+    },
+    subCategory: {
+        type: mongoose_1.Types.ObjectId,
+        required: true,
+        ref: 'subcategories',
+        autopopulate: true,
+    },
 });
-app.listen(8080);
-//# sourceMappingURL=app.js.map
+// Enable autopopulate for combined schema
+combinedSchema.plugin(require('mongoose-autopopulate'));
+exports.CombinedModel = mongoose_1.default.model('CombinedModel', combinedSchema);
+//# sourceMappingURL=combined.js.map

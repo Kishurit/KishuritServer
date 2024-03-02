@@ -11,7 +11,11 @@ import {
   Mail,
   Kishurit,
 } from "../types";
-
+import OrgsModel, { Orgs } from "../models/orgs.model";
+import { Schema } from "mongoose"
+import SubCategoryModel, { SubCategory } from "../models/subCategories.model";
+import CategoryModel, { Category } from "../models/categories.model";
+import { findCollection } from "../controller/routesController";
 
 const router: express.Router = express.Router();
 const verifyData = (data: any, res: Response, next: NextFunction): void => {
@@ -19,26 +23,8 @@ const verifyData = (data: any, res: Response, next: NextFunction): void => {
 };
 
 
-router.get("/", function (req: Request, res: Response, next: NextFunction) {
-  type Data = {
-    total: number;
-    cat: { name: string; totNum: number }[];
-  };
-
-  const data = jsonDB.job.reduce(
-    (acc: Data, element: Categorie) => {
-      const totalCatNum = element.links.reduce(
-        (acc1, element1) => acc1 + element1.links.length,
-        0
-      );
-      acc.total += totalCatNum;
-      acc.cat.push({ name: element.name, totNum: totalCatNum });
-      return acc;
-    },
-    { total: 0, cat: [] }
-  );
-
-  verifyData(data, res, next);
+router.get("/", async function (req: Request, res: Response, next: NextFunction) {
+    await findCollection(req, res, next)
 });
 
 router.post("/search", (req: Request, res: Response) => {
