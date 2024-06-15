@@ -36,7 +36,11 @@ const verifyData = (data, res, next) => {
     !data ? next() : res.json(data);
 };
 router.get("/", async function (req, res, next) {
+<<<<<<< HEAD
     await (0, routesController_1.findOrgsByColAndCnt)(req, res, next);
+=======
+    (0, routesController_1.findCollection)(req, res, next);
+>>>>>>> 6e0257cef84b96b3b5855027dea2651eb12de819
 });
 router.post("/search", (req, res) => {
     const { location, searchText } = req.body;

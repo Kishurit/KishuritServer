@@ -26,18 +26,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.subCategoriesSchema = void 0;
+exports.SubCategoryModel = exports.SubCatModel = exports.subCategoriesSchema = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
 const mongoose_unique_validator_1 = __importDefault(require("mongoose-unique-validator"));
 const mongoose_autopopulate_1 = __importDefault(require("mongoose-autopopulate"));
 const categories_model_1 = require("./categories.model");
+const db = __importStar(require("../db1"));
 exports.subCategoriesSchema = new mongoose_1.Schema({
     catRefId: {
         type: mongoose_1.Schema.Types.ObjectId,
-        unique: true,
+        unique: false,
         required: true,
-        ref: "categories", // Assuming "categories" is the name of the collection in the database
-        autopopulate: true
+        ref: "Category", // Assuming "categories" is the name of the collection in the database
+        autopopulate: true,
     },
     ...categories_model_1.categoriesSchema.obj,
 });
@@ -46,12 +47,13 @@ exports.subCategoriesSchema.plugin(mongoose_unique_validator_1.default, {
     message: "Error, expected {PATH} to be unique.",
 });
 exports.subCategoriesSchema.plugin(mongoose_autopopulate_1.default);
-const SubCategoryModel = mongoose_1.default.model("subcategories", exports.subCategoriesSchema);
-// const SubCatModelWithConn = (connection: Connection): Model<SubCategory> => { 
-//   return connection.model<SubCategory>("subcategories", subCategoriesSchema);
-// };
-// const SubCatModel = (): Model<SubCategory> => {
-//   return db.default(process.env.DB_NAME).model<SubCategory>("subcategories", subCategoriesSchema);
-// };
-exports.default = SubCategoryModel;
+exports.SubCatModel = mongoose_1.default.model("subcategories", exports.subCategoriesSchema);
+const SubCatModelWithConn = (connection) => {
+    return connection.model("subcategories", exports.subCategoriesSchema);
+};
+const SubCategoryModel = () => {
+    return db.default(process.env.DB_NAME).model("subcategories", exports.subCategoriesSchema);
+};
+exports.SubCategoryModel = SubCategoryModel;
+exports.default = exports.SubCategoryModel;
 //# sourceMappingURL=subCategories.model.js.map
