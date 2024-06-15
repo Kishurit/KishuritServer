@@ -22,34 +22,24 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.categoriesSchema = void 0;
+exports.CombinedModel = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
-const mongoose_unique_validator_1 = __importDefault(require("mongoose-unique-validator"));
-exports.categoriesSchema = new mongoose_1.Schema({
-    name: {
-        type: String,
-        unique: true,
+const combinedSchema = new mongoose_1.Schema({
+    category: {
+        type: mongoose_1.Types.ObjectId,
         required: true,
+        ref: 'categories',
+        autopopulate: true,
     },
-    desc: {
-        type: String,
-        unique: true,
-        required: false,
+    subCategory: {
+        type: mongoose_1.Types.ObjectId,
+        required: true,
+        ref: 'subcategories',
+        autopopulate: true,
     },
 });
-exports.categoriesSchema.plugin(mongoose_unique_validator_1.default, {
-    message: "Error, expected {PATH} to be unique.",
-});
-const CategoryModel = mongoose_1.default.model("categories", exports.categoriesSchema);
-// export const CatModelWithConn = (connection: Connection): Model<Category> => {
-//   return connection.model<Category>("Category", categoriesSchema);
-// };
-// export const CategoryModel = (): Model<Category> => {
-//   return db.default(process.env.DB_NAME).model<Category>("Category", categoriesSchema);
-// };
-exports.default = CategoryModel;
-//# sourceMappingURL=categories.model.js.map
+// Enable autopopulate for combined schema
+combinedSchema.plugin(require('mongoose-autopopulate'));
+exports.CombinedModel = mongoose_1.default.model('CombinedModel', combinedSchema);
+//# sourceMappingURL=combined.js.map

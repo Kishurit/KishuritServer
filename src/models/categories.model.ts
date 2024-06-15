@@ -24,7 +24,7 @@ categoriesSchema.plugin(uniqueValidator, {
   message: "Error, expected {PATH} to be unique.",
 });
 
-const CategoryModel: Model<Category> = mongoose.model<Category>("Category", categoriesSchema);
+const CategoryModel: Model<Category> = mongoose.model<Category>("categories", categoriesSchema);
 
 // export const CatModelWithConn = (connection: Connection): Model<Category> => {
 //   return connection.model<Category>("Category", categoriesSchema);

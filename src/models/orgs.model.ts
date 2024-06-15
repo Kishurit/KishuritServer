@@ -1,6 +1,8 @@
 import mongoose, { Document, Model, Schema, Types } from "mongoose";
 import uniqueValidator from "mongoose-unique-validator";
 import mongooseAutoPopulate from "mongoose-autopopulate";
+import { Category } from "./categories.model";
+import { SubCategory } from "./subCategories.model";
 
 interface Tel {
   tel: string;
@@ -20,8 +22,8 @@ interface Snif {
 };
 
 export interface Orgs extends Document {
-  catRefId: Types.ObjectId;
-  subCatRefId: Types.ObjectId;
+  catRefId: Category & Types.ObjectId;
+  subCatRefId: SubCategory & Types.ObjectId;
   org_name: string;
   desc?: string;
   web_link: string[];
@@ -58,8 +60,8 @@ const snifSchema = new Schema<Snif>({
 }, { _id: false });
 
 const orgSchema = new Schema<Orgs>({
-  catRefId: { type: Schema.Types.ObjectId, required: true, ref: "Categry", autopopulate: true },
-  subCatRefId: { type: Schema.Types.ObjectId, required: true, ref: "SubCategory", autopopulate: true },
+  catRefId: { type: Schema.Types.ObjectId, required: true, ref: "categories" },
+  subCatRefId: { type: Schema.Types.ObjectId, required: true, ref: "subcategories" },
   org_name: { type: String, required: true },
   desc: { type: String },
   web_link: { type: [String], default: [] },
@@ -83,6 +85,6 @@ const orgSchema = new Schema<Orgs>({
 orgSchema.plugin(uniqueValidator, "Error, expected {PATH} to be unique.");
 orgSchema.plugin(mongooseAutoPopulate);
 
-const OrgsModel: Model<Orgs> = mongoose.model<Orgs>("Org", orgSchema);
+const OrgsModel: Model<Orgs> = mongoose.model<Orgs>("orgs", orgSchema);
 
 export default OrgsModel;

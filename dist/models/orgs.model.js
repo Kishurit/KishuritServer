@@ -48,8 +48,8 @@ const snifSchema = new mongoose_1.Schema({
     address: { type: String, required: true }
 }, { _id: false });
 const orgSchema = new mongoose_1.Schema({
-    catRefId: { type: mongoose_1.Schema.Types.ObjectId, required: true, ref: "Categry", autopopulate: true },
-    subCatRefId: { type: mongoose_1.Schema.Types.ObjectId, required: true, ref: "SubCategory", autopopulate: true },
+    catRefId: { type: mongoose_1.Schema.Types.ObjectId, required: true, ref: "categories" },
+    subCatRefId: { type: mongoose_1.Schema.Types.ObjectId, required: true, ref: "subcategories" },
     org_name: { type: String, required: true },
     desc: { type: String },
     web_link: { type: [String], default: [] },
@@ -71,6 +71,6 @@ const orgSchema = new mongoose_1.Schema({
 });
 orgSchema.plugin(mongoose_unique_validator_1.default, "Error, expected {PATH} to be unique.");
 orgSchema.plugin(mongoose_autopopulate_1.default);
-const OrgsModel = mongoose_1.default.model("Org", orgSchema);
+const OrgsModel = mongoose_1.default.model("orgs", orgSchema);
 exports.default = OrgsModel;
 //# sourceMappingURL=orgs.model.js.map

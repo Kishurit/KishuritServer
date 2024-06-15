@@ -3,10 +3,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.writeOrg1 = exports.writeOrgsToDB = exports.jsonOfOrgsToDb = exports.writeSubCatToDB = exports.jsonOfSubCatToDB = exports.writeCatToDB = exports.jsonOfCatToDB = void 0;
+exports.writeOrg1 = exports.writeCombinedDB = exports.writeOrgsToDB = exports.jsonOfOrgsToDb = exports.writeSubCatToDB = exports.jsonOfSubCatToDB = exports.writeCatToDB = exports.jsonOfCatToDB = void 0;
 const categories_model_1 = __importDefault(require("./models/categories.model"));
-const subCategories_model_1 = require("./models/subCategories.model");
+const subCategories_model_1 = __importDefault(require("./models/subCategories.model"));
 const orgs_model_1 = __importDefault(require("./models/orgs.model"));
+const combined_1 = require("./models/combined");
 const findIdOfCatByName = (arr, name) => arr.find((e) => e.name === name)._id;
 const findIdOfSubcatByName = (arr, name) => arr.find((e) => e.name === name)._id;
 Array.prototype.filterValues = function () {
@@ -77,7 +78,7 @@ const writeSubCatToDB = async (jsonDB, catCollection) => {
     try {
         //var db1 = db.default(process.env.DB_NAME);
         const subCatObj = jsonOfSubCat(jsonDB, catCollection); // Wait for jsOfSubCat to complete
-        var newSubCat = await subCategories_model_1.SubCatModel?.insertMany(subCatObj);
+        var newSubCat = await subCategories_model_1.default?.insertMany(subCatObj);
         console.log("Subcategories inserted successfully.");
         return newSubCat;
     }
@@ -142,8 +143,24 @@ const writeOrgsToDB = async (jsonDB, catCollection, subcatCollection) => {
     }
 };
 exports.writeOrgsToDB = writeOrgsToDB;
+const writeCombinedDB = async (subcatCollection) => {
+    try {
+        const combinedData = subcatCollection.map((subCat) => ({
+            category: subCat.catRefId._id,
+            subCategory: subCat._id,
+        }));
+        const newCombined = await combined_1.CombinedModel.insertMany(combinedData);
+        console.log("Combined data inserted successfully.");
+        return newCombined;
+    }
+    catch (error) {
+        console.error(error);
+        throw error;
+    }
+};
+exports.writeCombinedDB = writeCombinedDB;
 const writeOrg1 = async (catName, subCatName, json) => {
-    const subcatRefId = (await subCategories_model_1.SubCatModel.find({ name: subCatName }));
+    const subcatRefId = (await subCategories_model_1.default.find({ name: subCatName }));
     const catRefId = subcatRefId[0].catRefId._id;
     console.log(catRefId);
     console.log(subcatRefId[0]);

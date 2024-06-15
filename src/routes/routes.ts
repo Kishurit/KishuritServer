@@ -13,15 +13,9 @@ import {
 } from "../types";
 import OrgsModel, { Orgs } from "../models/orgs.model";
 import { Schema } from "mongoose"
-<<<<<<< HEAD
 import SubCategoryModel, { SubCategory } from "../models/subCategories.model";
 import CategoryModel, { Category } from "../models/categories.model";
 import { findOrgsByCatId, findOrgsByColAndCnt } from "../controller/routesController";
-=======
-import { SubCatModel, SubCategory } from "../models/subCategories.model";
-import CategoryModel from "../models/categories.model";
-import { findCollection } from "../controller/routesController";
->>>>>>> 6e0257cef84b96b3b5855027dea2651eb12de819
 
 const router: express.Router = express.Router();
 const verifyData = (data: any, res: Response, next: NextFunction): void => {
@@ -30,11 +24,7 @@ const verifyData = (data: any, res: Response, next: NextFunction): void => {
 
 
 router.get("/", async function (req: Request, res: Response, next: NextFunction) {
-<<<<<<< HEAD
   await findOrgsByColAndCnt(req, res, next)
-=======
-  findCollection (req, res, next)
->>>>>>> 6e0257cef84b96b3b5855027dea2651eb12de819
 });
 
 router.post("/search", (req: Request, res: Response) => {

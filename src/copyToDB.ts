@@ -6,13 +6,12 @@ import CategoryModel, {
   Category,
 } from "./models/categories.model";
 import SubCategoryModel, {
-  subCategoriesSchema,
   SubCategory,
-  SubCatModel,
 } from "./models/subCategories.model";
 import OrgsModel, { Orgs } from "./models/orgs.model";
 import { Kishurit, Categorie, SubCategorie, Business } from "./types";
 import * as db from "./db1";
+import { Combined, CombinedModel } from "./models/combined";
 
 declare global {
   interface Array<T> {
@@ -20,13 +19,13 @@ declare global {
   }
 }
 
-const findIdOfCatByName = (arr: Category[], name: string): unknown =>
+const findIdOfCatByName = (arr: Category[], name: string): Types.ObjectId =>
   arr.find((e) => e.name === name)._id;
 
 const findIdOfSubcatByName = (
   arr: SubCategory[],
   name: string
-): unknown => arr.find((e) => e.name === name)._id;
+): Types.ObjectId => arr.find((e) => e.name === name)._id;
 
 Array.prototype.filterValues = function <T>(this: string[]): string[] {
   return this.filter((val: string) => val !== "" && val !== undefined && val !== null) as string[];
@@ -107,7 +106,7 @@ export const writeSubCatToDB = async (
   try {
     //var db1 = db.default(process.env.DB_NAME);
     const subCatObj = jsonOfSubCat(jsonDB, catCollection); // Wait for jsOfSubCat to complete
-    var newSubCat = await SubCatModel?.insertMany(subCatObj);
+    var newSubCat = await SubCategoryModel?.insertMany(subCatObj);
     console.log("Subcategories inserted successfully.");
     return newSubCat;
   } catch (error) {
@@ -184,6 +183,22 @@ export const writeOrgsToDB = async (jsonDB: Kishurit,
   }
 };
 
+export const writeCombinedDB = async (subcatCollection: SubCategory[]): Promise<Combined[]> => {
+  try {
+    const combinedData = subcatCollection.map((subCat: SubCategory) => ({
+      category: subCat.catRefId._id,
+      subCategory: subCat._id,
+    }));
+
+    const newCombined = await CombinedModel.insertMany(combinedData);
+    console.log("Combined data inserted successfully.");
+    
+    return newCombined;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
 
 export const writeOrg1 = async (
   catName: string,
@@ -191,7 +206,7 @@ export const writeOrg1 = async (
   json: Business
 ) => {
 
-  const subcatRefId = (await SubCatModel.find({ name: subCatName }));
+  const subcatRefId = (await SubCategoryModel.find({ name: subCatName }));
   const catRefId = subcatRefId[0].catRefId._id;
   console.log(catRefId);
   console.log(subcatRefId[0]);
