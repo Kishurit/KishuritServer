@@ -2,7 +2,7 @@ import * as dotenv from "dotenv"; // see https://github.com/motdotla/dotenv#how-
 dotenv.config();
 import express, { NextFunction, Request, Response } from "express";
 import * as fs from "fs";
-import { jsonDB } from "../api";
+import { cls, jsonDB } from "../api";
 import {
   Categorie,
   SubCategorie,
@@ -15,7 +15,7 @@ import OrgsModel, { Orgs } from "../models/orgs.model";
 import { Schema } from "mongoose"
 import SubCategoryModel, { SubCategory } from "../models/subCategories.model";
 import CategoryModel, { Category } from "../models/categories.model";
-import { findCollection } from "../controller/routesController";
+import { findOrgsByCatId, findOrgsByColAndCnt } from "../controller/routesController";
 
 const router: express.Router = express.Router();
 const verifyData = (data: any, res: Response, next: NextFunction): void => {
@@ -24,7 +24,7 @@ const verifyData = (data: any, res: Response, next: NextFunction): void => {
 
 
 router.get("/", async function (req: Request, res: Response, next: NextFunction) {
-    await findCollection(req, res, next)
+  await findOrgsByColAndCnt(req, res, next)
 });
 
 router.post("/search", (req: Request, res: Response) => {
@@ -87,26 +87,27 @@ router.post(
   }
 );
 
-router.post("/", function (req: Request, res: Response, next: NextFunction) {
-  type Data = {
-    total: number;
-    cat: { name: string; totNum: number }[];
-  };
+router.post("/", async function (req: Request, res: Response, next: NextFunction) {
+  // type Data = {
+  //   total: number;
+  //   cat: { name: string; totNum: number }[];
+  // };
 
-  const data = jsonDB.job.reduce(
-    (acc: Data, element: Categorie) => {
-      const totalCatNum = element.links.reduce(
-        (acc1, element1) => acc1 + element1.links.length,
-        0
-      );
-      acc.total += totalCatNum;
-      acc.cat.push({ name: element.name, totNum: totalCatNum });
-      return acc;
-    },
-    { total: 0, cat: [] }
-  );
+  // const data = jsonDB.job.reduce(
+  //   (acc: Data, element: Categorie) => {
+  //     const totalCatNum = element.links.reduce(
+  //       (acc1, element1) => acc1 + element1.links.length,
+  //       0
+  //     );
+  //     acc.total += totalCatNum;
+  //     acc.cat.push({ name: element.name, totNum: totalCatNum });
+  //     return acc;
+  //   },
+  //   { total: 0, cat: [] }
+  // );
+  await findOrgsByColAndCnt(req, res, next)
 
-  verifyData(data, res, next);
+  // verifyData(data, res, next);
 });
 
 router.post(
@@ -131,8 +132,56 @@ router.post("/:id/catTotalNum", function (req, res, next) {
   );
 });
 
-router.post("/:id", function (req: Request, res: Response, next: NextFunction) {
-  verifyData(jsonDB.job[req.params.id], res, next);
+router.post("/:id", async function (req: Request, res: Response, next: NextFunction) {
+  // cls();
+
+  // try {
+  //   const id: String = req.params.id;
+  //   if (id === "null" || id === "undefined") return res.json([]);
+
+  //   const json = jsonDB.job[15];
+
+  //   const cat: Category = await CategoryModel.findById(id);
+  //   //console.log (cat);
+  //   // const subCats: SubCategory[] = await SubCategoryModel.find({ catRefId: cat._id });
+  //   //console.log(subCats);
+  //   // console.log(json);
+
+  //   // const data: any = {
+  //   //   name: cat.name, desc: cat.desc, links: [
+  //   //     ...orgs
+
+  //   //   ]
+  //   // }
+  //   // const data: any = { ot: "!@"};
+  //   const orgs: Orgs[] = await OrgsModel.find({ catRefId: cat._id }).populate("subCatRefId")
+  //   type dataType = {
+  //     name: string,
+  //     desc: string,
+  //     links: {
+  //       cat: string,
+  //       desc?: string
+  //       links: Orgs[]
+  //     }[]
+  //   };
+
+  //   var data: dataType = { name: cat.name, desc: cat.desc, links: [] }
+  //   for (const org of orgs) {
+  //     const index = data.links.findIndex(item => item.cat === org.subCatRefId.name);
+  //     if (index == -1) data.links.push({ desc: org.subCatRefId.desc, cat: org.subCatRefId.name, links: [org] })
+  //     else data.links[index].links.push(org);
+  //   }
+
+
+  //   // console.log(data);
+
+  //   verifyData(data, res, next);
+  //   //res.json([json, data]);
+  // }
+  // catch (err) {
+  //   res.status(404).json(err);
+  // }
+  await findOrgsByCatId(req, res, next);
 });
 
 router.post(

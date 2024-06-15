@@ -36,7 +36,7 @@ const verifyData = (data, res, next) => {
     !data ? next() : res.json(data);
 };
 router.get("/", async function (req, res, next) {
-    await (0, routesController_1.findCollection)(req, res, next);
+    await (0, routesController_1.findOrgsByColAndCnt)(req, res, next);
 });
 router.post("/search", (req, res) => {
     const { location, searchText } = req.body;
@@ -66,14 +66,25 @@ router.post("/totalNum", function (req, res, next) {
         element.links.reduce((acc1, element1) => acc1 + element1.links.length, 0), 0);
     res.json(totalNum);
 });
-router.post("/", function (req, res, next) {
-    const data = api_1.jsonDB.job.reduce((acc, element) => {
-        const totalCatNum = element.links.reduce((acc1, element1) => acc1 + element1.links.length, 0);
-        acc.total += totalCatNum;
-        acc.cat.push({ name: element.name, totNum: totalCatNum });
-        return acc;
-    }, { total: 0, cat: [] });
-    verifyData(data, res, next);
+router.post("/", async function (req, res, next) {
+    // type Data = {
+    //   total: number;
+    //   cat: { name: string; totNum: number }[];
+    // };
+    // const data = jsonDB.job.reduce(
+    //   (acc: Data, element: Categorie) => {
+    //     const totalCatNum = element.links.reduce(
+    //       (acc1, element1) => acc1 + element1.links.length,
+    //       0
+    //     );
+    //     acc.total += totalCatNum;
+    //     acc.cat.push({ name: element.name, totNum: totalCatNum });
+    //     return acc;
+    //   },
+    //   { total: 0, cat: [] }
+    // );
+    await (0, routesController_1.findOrgsByColAndCnt)(req, res, next);
+    // verifyData(data, res, next);
 });
 router.post("/:id/catName", function (req, res, next) {
     verifyData(api_1.jsonDB.job[req.params.id].links.map((e) => e.cat), res, next);
@@ -81,8 +92,47 @@ router.post("/:id/catName", function (req, res, next) {
 router.post("/:id/catTotalNum", function (req, res, next) {
     verifyData(api_1.jsonDB.job[req.params.id].links.reduce((acc1, element1) => acc1 + element1.links.length, 0), res, next);
 });
-router.post("/:id", function (req, res, next) {
-    verifyData(api_1.jsonDB.job[req.params.id], res, next);
+router.post("/:id", async function (req, res, next) {
+    // cls();
+    // try {
+    //   const id: String = req.params.id;
+    //   if (id === "null" || id === "undefined") return res.json([]);
+    //   const json = jsonDB.job[15];
+    //   const cat: Category = await CategoryModel.findById(id);
+    //   //console.log (cat);
+    //   // const subCats: SubCategory[] = await SubCategoryModel.find({ catRefId: cat._id });
+    //   //console.log(subCats);
+    //   // console.log(json);
+    //   // const data: any = {
+    //   //   name: cat.name, desc: cat.desc, links: [
+    //   //     ...orgs
+    //   //   ]
+    //   // }
+    //   // const data: any = { ot: "!@"};
+    //   const orgs: Orgs[] = await OrgsModel.find({ catRefId: cat._id }).populate("subCatRefId")
+    //   type dataType = {
+    //     name: string,
+    //     desc: string,
+    //     links: {
+    //       cat: string,
+    //       desc?: string
+    //       links: Orgs[]
+    //     }[]
+    //   };
+    //   var data: dataType = { name: cat.name, desc: cat.desc, links: [] }
+    //   for (const org of orgs) {
+    //     const index = data.links.findIndex(item => item.cat === org.subCatRefId.name);
+    //     if (index == -1) data.links.push({ desc: org.subCatRefId.desc, cat: org.subCatRefId.name, links: [org] })
+    //     else data.links[index].links.push(org);
+    //   }
+    //   // console.log(data);
+    //   verifyData(data, res, next);
+    //   //res.json([json, data]);
+    // }
+    // catch (err) {
+    //   res.status(404).json(err);
+    // }
+    await (0, routesController_1.findOrgsByCatId)(req, res, next);
 });
 router.post("/:id1/:id2/subCatTotalNum", function (req, res, next) {
     verifyData(api_1.jsonDB.job[req.params.id1].links[req.params.id2].links.length, res, next);

@@ -27,10 +27,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const dotenv = __importStar(require("dotenv"));
-const morgan_1 = __importDefault(require("morgan"));
 const express_1 = __importDefault(require("express"));
 const nocache_1 = __importDefault(require("nocache"));
 const cors_1 = __importDefault(require("cors"));
+const body_parser_1 = __importDefault(require("body-parser"));
 const server_1 = require("./server");
 const routes_1 = __importDefault(require("./routes"));
 const db = __importStar(require("./db1"));
@@ -55,9 +55,12 @@ const options = {
 };
 server_1.app.use((0, cors_1.default)(options));
 server_1.app.use(express_1.default.json({ limit: "50mb" }));
+server_1.app.use(body_parser_1.default.json());
 server_1.app.use(express_1.default.urlencoded({ limit: "50mb", extended: false }));
 server_1.app.use((0, nocache_1.default)());
-server_1.app.use((0, morgan_1.default)("dev"));
+// app.use(helmet()); // Add security headers
+// app.disable("x-powered-by"); // Hide Express server information
+// app.use(morgan("combined")); // Log HTTP requests
 server_1.app.use(function (req, res, next) {
     console.log(new Date().toLocaleTimeString());
     next();

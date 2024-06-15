@@ -22,7 +22,7 @@ mailRouter.post(
 
     if (name.trim() === "") name = "---";
     if (tel.trim() === "") tel = "---";
-    if (email.trim() === "") email = "---";
+    if (email.trim() === "") email = "email@from.client";
     const mail = `Message from ${email} name: ${name}  tel: ${tel}\n ${message.trim()}`;
 
     console.log(mail);

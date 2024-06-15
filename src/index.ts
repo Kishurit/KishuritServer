@@ -3,6 +3,9 @@ import morgan from "morgan";
 import express, { NextFunction, Request, Response } from "express";
 import nocache from "nocache";
 import cors from "cors"; 
+import bodyParser from 'body-parser'
+import helmet from "helmet";
+
 import { app } from "./server";
 import routes from "./routes";
 import * as db from "./db1";
@@ -35,9 +38,13 @@ const options: cors.CorsOptions = {
 
 app.use(cors(options));
 app.use(express.json({ limit: "50mb" }));
+app.use(bodyParser.json());
 app.use(express.urlencoded({ limit: "50mb", extended: false }));
 app.use(nocache());
-app.use(morgan("dev"));
+// app.use(helmet()); // Add security headers
+// app.disable("x-powered-by"); // Hide Express server information
+// app.use(morgan("combined")); // Log HTTP requests
+
 
 app.use(function (req: Request, res: Response, next: NextFunction) {
   console.log(new Date().toLocaleTimeString());

@@ -39,7 +39,7 @@ mailRouter.post("/mail", function (req, res, next) {
     if (tel.trim() === "")
         tel = "---";
     if (email.trim() === "")
-        email = "---";
+        email = "email@from.client";
     const mail = `Message from ${email} name: ${name}  tel: ${tel}\n ${message.trim()}`;
     console.log(mail);
     MailService_1.default.sendMail({ from: email, subject: subject, text: mail }, req, res);
